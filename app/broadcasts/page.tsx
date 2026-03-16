@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import type { Broadcast } from '@/lib/types'
+import { LocalTime } from '@/components/LocalTime'
 
 const statusStyles: Record<string, { bg: string; color: string }> = {
   scheduled: { bg: '#e6f1fb', color: '#0c447c' },
@@ -45,10 +46,7 @@ export default async function BroadcastsPage() {
                   {b.message_body.slice(0, 80)}{b.message_body.length > 80 ? '...' : ''}
                 </p>
                 <p style={{ fontSize: 12, color: '#aaa' }}>
-                  {new Date(b.scheduled_at).toLocaleDateString('en-GB', {
-                    weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
-                    hour: '2-digit', minute: '2-digit',
-                  })}
+                  <LocalTime dateString={b.scheduled_at} />
                   {b.target_tags && b.target_tags.length > 0 && ` · ${b.target_tags.join(', ')} contacts`}
                   {b.status === 'sent' && ` · ${b.sent_count} sent`}
                 </p>

@@ -49,9 +49,13 @@ export default function NewBroadcastPage() {
     }
   }
 
-  // Set minimum datetime to now
-  const minDatetime = new Date(Date.now() + 5 * 60 * 1000)
-    .toISOString().slice(0, 16)
+  // Generate min datetime in LOCAL time (not UTC) for the input
+  function getLocalDatetimeMin() {
+    const now = new Date(Date.now() + 5 * 60 * 1000)
+    // Offset for local timezone
+    const offset = now.getTimezoneOffset() * 60000
+    return new Date(now.getTime() - offset).toISOString().slice(0, 16)
+  }
 
   return (
     <div style={{ maxWidth: 560 }}>
@@ -111,7 +115,7 @@ export default function NewBroadcastPage() {
               type="datetime-local"
               value={scheduledAt}
               onChange={e => setScheduledAt(e.target.value)}
-              // min={minDatetime}
+              min={getLocalDatetimeMin()}
               required
             />
           </div>

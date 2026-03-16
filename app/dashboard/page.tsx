@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import { LocalTime } from '@/components/LocalTime'
 
 export default async function DashboardPage() {
   const supabase = createClient()
@@ -105,7 +106,7 @@ export default async function DashboardPage() {
                   <span className={`tag tag-${msg.customer.tag}`}>{msg.customer.tag}</span>
                 )}
                 <span style={{ fontSize: 11, color: '#bbb' }}>
-                  {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  <LocalTime dateString={msg.created_at} showTime={true} />
                 </span>
               </div>
             </div>
@@ -124,7 +125,7 @@ export default async function DashboardPage() {
               <div key={b.id} style={{ padding: '8px 0', borderBottom: '1px solid #f0f0ee' }}>
                 <p style={{ fontSize: 13, fontWeight: 500 }}>{b.name}</p>
                 <p style={{ fontSize: 12, color: '#aaa', marginTop: 2 }}>
-                  {new Date(b.scheduled_at).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })} · {b.target_tags?.join(', ') || 'all contacts'}
+                  <LocalTime dateString={b.scheduled_at} /> · {b.target_tags?.join(', ') || 'all contacts'}
                 </p>
               </div>
             )) : (

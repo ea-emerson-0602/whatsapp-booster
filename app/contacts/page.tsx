@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import type { Customer } from '@/lib/types'
+import { LocalTime } from '@/components/LocalTime'
 
 export default async function ContactsPage({
   searchParams,
@@ -84,9 +85,7 @@ export default async function ContactsPage({
                   <span className={`tag tag-${c.tag}`}>{c.tag}</span>
                 </td>
                 <td style={{ padding: '10px 16px', color: '#aaa' }}>
-                  {c.last_message_at
-                    ? new Date(c.last_message_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
-                    : '—'}
+                  {c.last_message_at ? <LocalTime dateString={c.last_message_at} showTime={false} /> : '—'}
                 </td>
                 <td style={{ padding: '10px 16px' }}>
                   <Link href={`/contacts/${c.id}`} style={{ color: '#4338ca', fontSize: 12 }}>View →</Link>
