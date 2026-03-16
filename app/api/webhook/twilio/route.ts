@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     .eq('is_active', true)
 
   const lowerBody = body.toLowerCase()
-  const matched = templates?.find(t =>
+  const matched = templates?.find((t: { trigger_keywords: string[]; reply_body: string }) =>
     t.trigger_keywords.some((kw: string) => lowerBody.includes(kw.toLowerCase()))
   )
 
