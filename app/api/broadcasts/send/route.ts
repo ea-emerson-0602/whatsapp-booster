@@ -15,12 +15,19 @@ export async function GET(request: NextRequest) {
   const supabase = createAdminClient()
   const now = new Date().toISOString()
 
+  // Debug log
+  console.log('Cron fired at:', now)
+
   // 1. Find all broadcasts that are due and still scheduled
   const { data: dueBroadcasts, error } = await supabase
     .from('broadcasts')
     .select('*')
     .eq('status', 'scheduled')
     .lte('scheduled_at', now)
+
+  // Debug log
+  console.log('Due broadcasts found:', dueBroadcasts)
+  console.log('Query error:', error)
 
   if (error) {
     console.error('Error fetching broadcasts:', error)
@@ -53,6 +60,10 @@ export async function GET(request: NextRequest) {
     }
 
     const { data: customers } = await customerQuery
+
+    // Debug log
+    console.log(`Broadcast "${broadcast.name}" targets:`, customers?.length, 'customers')
+    console.log('Target tags:', broadcast.target_tags)
 
     if (!customers || customers.length === 0) {
       await supabase
@@ -91,7 +102,7 @@ export async function GET(request: NextRequest) {
         await new Promise(resolve => setTimeout(resolve, 200))
 
       } catch (err: any) {
-        console.error(`Failed to send to ${customer.phone}:`, err.message)
+        console.error(`Failed to send to ${customer.phone}:`, err.message, err.code, err.status)
         errors.push(customer.phone)
       }
     }

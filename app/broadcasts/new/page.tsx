@@ -111,7 +111,7 @@ export default function NewBroadcastPage() {
               type="datetime-local"
               value={scheduledAt}
               onChange={e => setScheduledAt(e.target.value)}
-              min={minDatetime}
+              // min={minDatetime}
               required
             />
           </div>
