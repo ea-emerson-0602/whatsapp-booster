@@ -19,6 +19,7 @@ export default async function DashboardPage({
     { data: recentMessages },
     { data: upcomingBroadcasts },
     { data: staleContacts },
+    { data: subscription },
   ] = await Promise.all([
     supabase.from('customers').select('*', { count: 'exact', head: true }).eq('user_id', user!.id),
     supabase.from('messages').select('*', { count: 'exact', head: true })
@@ -49,6 +50,10 @@ export default async function DashboardPage({
       .eq('user_id', user!.id)
       .eq('tag', 'Pending')
       .lt('last_message_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()),
+    supabase.from('subscriptions')
+      .select('*')
+      .eq('user_id', user!.id)
+      .single(),
   ])
 
   const firstName = user?.email?.split('@')[0] ?? 'there'
@@ -67,7 +72,31 @@ export default async function DashboardPage({
         <Link href="/broadcasts/new" className="btn btn-primary">+ New broadcast</Link>
       </div>
 
-      {/* Trial started banner */}
+      {/* No subscription banner */}
+      {!subscription && searchParams.trial !== 'started' && (
+        <div style={{ background: '#f0effe', border: '1px solid #afa9ec', borderRadius: 10, padding: '0.875rem 1rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+          <div>
+            <p style={{ fontWeight: 500, fontSize: 14, color: '#3c3489' }}>Start your free 7-day trial</p>
+            <p style={{ fontSize: 13, color: '#534ab7', marginTop: 2 }}>No credit card charged until your trial ends. Cancel anytime.</p>
+          </div>
+          <Link href="/subscribe" className="btn" style={{ background: '#4338ca', color: '#fff', fontSize: 13, flexShrink: 0 }}>
+            Start free trial →
+          </Link>
+        </div>
+      )}
+
+      {/* Trial active banner */}
+      {subscription?.status === 'trialing' && (
+        <div style={{ background: '#e6f1fb', border: '1px solid #85b7eb', borderRadius: 10, padding: '0.75rem 1rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13, color: '#0c447c' }}>
+          <span>
+            🎉 Free trial active —{' '}
+            {Math.ceil((new Date(subscription.trial_ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days remaining
+          </span>
+          <Link href="/subscribe" style={{ fontWeight: 500, color: '#0c447c', fontSize: 13 }}>Manage →</Link>
+        </div>
+      )}
+
+      {/* Trial started banner (after redirect) */}
       {searchParams.trial === 'started' && (
         <div style={{ background: '#e6f1fb', border: '1px solid #85b7eb', borderRadius: 10, padding: '0.75rem 1rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 14, color: '#0c447c' }}>
           <span>🎉 Your 7-day free trial has started! You won't be charged until your trial ends.</span>
