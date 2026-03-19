@@ -35,7 +35,7 @@ export default async function SubscribePage() {
             🎉 Free trial active — {trialDaysLeft} day{trialDaysLeft !== 1 ? 's' : ''} remaining
           </p>
           <p style={{ opacity: 0.8 }}>
-            Your trial ends on {new Date(subscription.trial_ends_at).toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}. After that, $15/month kicks in automatically.
+            Your trial ends on {new Date(subscription.trial_ends_at).toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}. After that, NGN10,000/month kicks in automatically.
           </p>
         </div>
       )}
