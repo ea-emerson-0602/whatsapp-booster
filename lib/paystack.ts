@@ -6,7 +6,7 @@ const PAYSTACK_BASE_URL = 'https://api.paystack.co'
 
 export const PLAN = {
   name: 'WA Booster Starter',
-  amount: 1500, // $15 in cents
+  amount: 1000000, // 10,000 NGN in kobo (Paystack uses kobo — multiply by 100)
   interval: 'monthly',
   trialDays: 7,
   code: process.env.PAYSTACK_PLAN_CODE!,
@@ -38,8 +38,7 @@ export async function initializeTransaction({
   return paystackRequest('POST', '/transaction/initialize', {
     email,
     plan: PLAN.code,
-    amount: PLAN.amount * 100,
-    currency: 'USD',
+    amount: PLAN.amount, // already in kobo
     callback_url: callbackUrl,
     metadata: {
       user_id: userId,

@@ -77,7 +77,7 @@ export default async function DashboardPage({
         <div style={{ background: '#f0effe', border: '1px solid #afa9ec', borderRadius: 10, padding: '0.875rem 1rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
           <div>
             <p style={{ fontWeight: 500, fontSize: 14, color: '#3c3489' }}>Start your free 7-day trial</p>
-            <p style={{ fontSize: 13, color: '#534ab7', marginTop: 2 }}>No credit card charged until your trial ends. Cancel anytime.</p>
+            <p style={{ fontSize: 13, color: '#534ab7', marginTop: 2 }}>No credit card charged until your trial ends. ₦10,000/month after that. Cancel anytime.</p>
           </div>
           <Link href="/subscribe" className="btn" style={{ background: '#4338ca', color: '#fff', fontSize: 13, flexShrink: 0 }}>
             Start free trial →

@@ -64,7 +64,7 @@ export default async function SubscribePage() {
             <p style={{ color: '#888', fontSize: 13, marginTop: 2 }}>Everything you need to automate WhatsApp</p>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <p style={{ fontSize: 24, fontWeight: 500 }}>$15</p>
+            <p style={{ fontSize: 24, fontWeight: 500 }}>₦10,000</p>
             <p style={{ fontSize: 12, color: '#aaa' }}>per month</p>
           </div>
         </div>

@@ -45,7 +45,7 @@ export default function SubscribeButton({
         className="btn btn-primary"
         style={{ width: '100%', justifyContent: 'center', fontSize: 15, padding: '0.75rem' }}
       >
-        {loading ? 'Redirecting to checkout...' : 'Subscribe — $15/month'}
+        {loading ? 'Redirecting to checkout...' : 'Subscribe — ₦10,000/month'}
       </button>
       {error && (
         <p style={{ color: '#a32d2d', fontSize: 13, marginTop: 8, textAlign: 'center' }}>
