@@ -181,3 +181,5 @@ Week 3 (polish before selling):
 Usage limits — cap free/trial users at say 50 contacts and 3 auto-replies, then prompt them to upgrade.
 Onboarding flow — a short checklist for new users: add first contact → create first auto-reply → send first broadcast. Reduces drop-off significantly.
 Find first paying customers — the README has the outreach strategy: Instagram DMs to small business owners, local WhatsApp business groups, and Gumroad/Lemon Squeezy for discovery.
+
+I'm building a WhatsApp Workflow Booster SaaS with Next.js, Supabase, Twilio, and Paystack. The core features are working and deployed on Vercel. Next step is building the Paystack subscription/payment flow to charge $15/month."

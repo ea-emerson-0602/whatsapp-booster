@@ -2,7 +2,11 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { LocalTime } from '@/components/LocalTime'
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: { trial?: string; subscribed?: string }
+}) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -62,6 +66,14 @@ export default async function DashboardPage() {
         </div>
         <Link href="/broadcasts/new" className="btn btn-primary">+ New broadcast</Link>
       </div>
+
+      {/* Trial started banner */}
+      {searchParams.trial === 'started' && (
+        <div style={{ background: '#e6f1fb', border: '1px solid #85b7eb', borderRadius: 10, padding: '0.75rem 1rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 14, color: '#0c447c' }}>
+          <span>🎉 Your 7-day free trial has started! You won't be charged until your trial ends.</span>
+          <Link href="/subscribe" style={{ fontWeight: 500, color: '#0c447c', fontSize: 13 }}>View plan →</Link>
+        </div>
+      )}
 
       {/* Stale contacts alert */}
       {staleCount > 0 && (
