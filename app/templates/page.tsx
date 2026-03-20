@@ -2,16 +2,23 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import type { Template } from '@/lib/types'
 import ToggleTemplate from './ToggleTemplate'
+import { checkLimit } from '@/lib/limits'
+import UpgradePrompt from '@/components/UpgradePrompt'
 
 export default async function TemplatesPage() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { data: templates } = await supabase
-    .from('templates')
-    .select('*')
-    .eq('user_id', user!.id)
-    .order('created_at', { ascending: false })
+  const [templateLimit, { data: templates }] = await Promise.all([
+    checkLimit(user!.id, 'templates'),
+    supabase
+      .from('templates')
+      .select('*')
+      .eq('user_id', user!.id)
+      .order('created_at', { ascending: false }),
+  ])
+
+  const { current, limit, allowed } = templateLimit
 
   return (
     <div>
@@ -24,6 +31,25 @@ export default async function TemplatesPage() {
         </div>
         <Link href="/templates/new" className="btn btn-primary">+ New auto-reply</Link>
       </div>
+
+      {/* Usage bar */}
+      <div style={{ marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#888', marginBottom: 4 }}>
+          <span>{current} of {limit} auto-reply rules used</span>
+          {!allowed && <Link href="/subscribe" style={{ color: '#4338ca', fontWeight: 500 }}>Upgrade →</Link>}
+        </div>
+        <div style={{ background: '#f0f0ee', borderRadius: 99, height: 4, overflow: 'hidden' }}>
+          <div style={{
+            height: '100%',
+            borderRadius: 99,
+            width: `${Math.min((current / limit) * 100, 100)}%`,
+            background: !allowed ? '#e24b4a' : current / limit > 0.8 ? '#ef9f27' : '#4338ca',
+            transition: 'width 0.3s',
+          }} />
+        </div>
+      </div>
+
+      {!allowed && <UpgradePrompt resource="templates" current={current} limit={limit} />}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {templates && templates.length > 0 ? templates.map((t: Template) => (

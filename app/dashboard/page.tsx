@@ -56,7 +56,12 @@ export default async function DashboardPage({
       .single(),
   ])
 
-  const firstName = user?.email?.split('@')[0] ?? 'there'
+  // Use full name from Google profile if available, otherwise first part of email
+  const fullName = user?.user_metadata?.full_name
+    || user?.user_metadata?.name
+    || user?.email?.split('@')[0]
+    || 'there'
+  const firstName = fullName.split(' ')[0]
   const staleCount = staleContacts?.length ?? 0
 
   return (

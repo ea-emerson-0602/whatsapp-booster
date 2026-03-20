@@ -31,7 +31,17 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Public routes — no login needed
-  const publicRoutes = ['/login', '/signup', '/api/webhook', '/api/broadcasts/send', '/api/subscribe/callback', '/api/trial-reminder']
+  const publicRoutes = [
+    '/login',
+    '/signup',
+    '/forgot-password',
+    '/reset-password',
+    '/api/auth/callback',
+    '/api/webhook',
+    '/api/broadcasts/send',
+    '/api/subscribe/callback',
+    '/api/trial-reminder',
+  ]
   const isPublic = publicRoutes.some(r => pathname.startsWith(r))
 
   // Redirect unauthenticated users to /login

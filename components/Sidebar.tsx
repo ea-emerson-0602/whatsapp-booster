@@ -52,7 +52,8 @@ export default function Sidebar({ user }: { user: User }) {
 
   async function handleSignOut() {
     await supabase.auth.signOut()
-    router.push('/login')
+    // Full page navigation — forces server to re-render layout without sidebar
+    window.location.href = '/login'
   }
 
   const statusStyle = subStatus ? STATUS_STYLES[subStatus] : null
@@ -104,6 +105,9 @@ export default function Sidebar({ user }: { user: User }) {
       ))}
 
       <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid #e8e8e6' }}>
+        <p style={{ fontSize: 13, fontWeight: 500, color: '#1a1a1a', padding: '0 0.75rem 2px', wordBreak: 'break-word' }}>
+          {user.user_metadata?.full_name || user.user_metadata?.name || ''}
+        </p>
         <p style={{ fontSize: 12, color: '#999', padding: '0 0.75rem 0.5rem', wordBreak: 'break-all' }}>
           {user.email}
         </p>

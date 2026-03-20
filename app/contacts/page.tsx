@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import type { Customer } from '@/lib/types'
 import { LocalTime } from '@/components/LocalTime'
+import { checkLimit } from '@/lib/limits'
+import UpgradePrompt from '@/components/UpgradePrompt'
 
 export default async function ContactsPage({
   searchParams,
@@ -11,20 +13,28 @@ export default async function ContactsPage({
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  let query = supabase
-    .from('customers')
-    .select('*')
-    .eq('user_id', user!.id)
-    .order('created_at', { ascending: false })
+  const [contactLimit, customers_result] = await Promise.all([
+    checkLimit(user!.id, 'contacts'),
+    (async () => {
+      let query = supabase
+        .from('customers')
+        .select('*')
+        .eq('user_id', user!.id)
+        .order('created_at', { ascending: false })
 
-  if (searchParams.tag) query = query.eq('tag', searchParams.tag)
-  if (searchParams.q)   query = query.ilike('name', `%${searchParams.q}%`)
-  if (searchParams.filter === 'stale') {
-    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-    query = query.eq('tag', 'Pending').lt('last_message_at', sevenDaysAgo)
-  }
+      if (searchParams.tag) query = query.eq('tag', searchParams.tag)
+      if (searchParams.q)   query = query.ilike('name', `%${searchParams.q}%`)
+      if (searchParams.filter === 'stale') {
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+        query = query.eq('tag', 'Pending').lt('last_message_at', sevenDaysAgo)
+      }
 
-  const { data: customers } = await query
+      return query
+    })(),
+  ])
+
+  const { data: customers } = customers_result
+  const { current, limit, allowed } = contactLimit
 
   return (
     <div>
@@ -32,6 +42,25 @@ export default async function ContactsPage({
         <h1 style={{ fontSize: 22, fontWeight: 500 }}>Contacts</h1>
         <Link href="/contacts/new" className="btn btn-primary">+ Add contact</Link>
       </div>
+
+      {/* Usage bar */}
+      <div style={{ marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#888', marginBottom: 4 }}>
+          <span>{current} of {limit} contacts used</span>
+          {!allowed && <Link href="/subscribe" style={{ color: '#4338ca', fontWeight: 500 }}>Upgrade →</Link>}
+        </div>
+        <div style={{ background: '#f0f0ee', borderRadius: 99, height: 4, overflow: 'hidden' }}>
+          <div style={{
+            height: '100%',
+            borderRadius: 99,
+            width: `${Math.min((current / limit) * 100, 100)}%`,
+            background: !allowed ? '#e24b4a' : current / limit > 0.8 ? '#ef9f27' : '#4338ca',
+            transition: 'width 0.3s',
+          }} />
+        </div>
+      </div>
+
+      {!allowed && <UpgradePrompt resource="contacts" current={current} limit={limit} />}
 
       {/* Filters */}
       <div className="filter-row">
@@ -79,7 +108,11 @@ export default async function ContactsPage({
           <tbody>
             {customers && customers.length > 0 ? customers.map((c: Customer) => (
               <tr key={c.id} style={{ borderBottom: '1px solid #f0f0ee' }}>
-                <td style={{ padding: '10px 16px', fontWeight: 500 }}>{c.name}</td>
+                <td style={{ padding: '10px 16px', fontWeight: 500 }}>
+                  <Link href={`/contacts/${c.id}`} style={{ color: '#1a1a1a', textDecoration: 'none' }}>
+                    {c.name}
+                  </Link>
+                </td>
                 <td style={{ padding: '10px 16px', color: '#666' }}>{c.phone}</td>
                 <td style={{ padding: '10px 16px' }}>
                   <span className={`tag tag-${c.tag}`}>{c.tag}</span>
