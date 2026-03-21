@@ -6,7 +6,6 @@ import type { Tag, Customer } from '@/lib/types'
 import Spinner from '@/components/Spinner'
 
 const TAGS: { value: Tag; label: string }[] = [
-  { value: null, label: 'Untagged' },
   { value: 'Lead', label: 'Lead' },
   { value: 'Paid', label: 'Paid' },
   { value: 'Pending', label: 'Pending' },
@@ -39,13 +38,19 @@ export default function ContactActions({ contact }: { contact: Customer }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      {/* Show hint if currently untagged */}
+      {tag === null && (
+        <p style={{ fontSize: 12, color: '#aaa', marginBottom: 2 }}>
+          No tag set — pick one below:
+        </p>
+      )}
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
         {TAGS.map(({ value, label }) => (
           <button
             key={label}
             onClick={() => handleTagChange(value)}
             disabled={saving}
-            className={`tag tag-${value ?? 'Untagged'}`}
+            className={`tag tag-${value}`}
             style={{
               cursor: saving ? 'wait' : 'pointer',
               border: tag === value ? '2px solid currentColor' : '2px solid transparent',
