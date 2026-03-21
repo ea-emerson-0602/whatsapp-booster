@@ -5,10 +5,12 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Tag } from '@/lib/types'
 
+type NonNullTag = 'Lead' | 'Paid' | 'Pending'
+
 export default function NewContactForm() {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
-  const [tag, setTag] = useState<Tag>('Lead')
+  const [tag, setTag] = useState<NonNullTag>('Lead')
   const [notes, setNotes] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -55,7 +57,7 @@ export default function NewContactForm() {
         </div>
         <div>
           <label style={{ fontSize: 13, color: '#555', display: 'block', marginBottom: 4 }}>Tag</label>
-          <select value={tag} onChange={e => setTag(e.target.value as Tag)}>
+          <select value={tag} onChange={e => setTag(e.target.value as NonNullTag)}>
             <option value="Lead">Lead</option>
             <option value="Paid">Paid</option>
             <option value="Pending">Pending</option>
