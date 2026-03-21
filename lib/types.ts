@@ -1,6 +1,6 @@
 // Mirrors your Supabase tables exactly
 
-export type Tag = 'Lead' | 'Paid' | 'Pending'
+export type Tag = 'Lead' | 'Paid' | 'Pending' | null
 export type MessageDirection = 'inbound' | 'outbound'
 export type MessageStatus = 'queued' | 'sent' | 'delivered' | 'failed'
 export type BroadcastStatus = 'scheduled' | 'sending' | 'sent' | 'failed'

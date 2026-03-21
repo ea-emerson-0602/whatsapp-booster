@@ -1,7 +1,11 @@
 import type { Metadata } from 'next'
+import './globals.css'
+import './styles.css'
+
 import { createClient } from '@/lib/supabase/server'
 import Sidebar from '@/components/Sidebar'
-import './globals.css'
+import ProgressBar from '@/components/ProgressBar'
+import { Suspense } from 'react'
 
 export const metadata: Metadata = {
   title: 'WhatsApp Booster',
@@ -14,16 +18,15 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   const supabase = createClient()
-  // Use getUser() only once here in the root layout.
-  // Middleware handles per-route auth redirects so this
-  // result is just used to decide whether to show the sidebar.
   const { data: { user } } = await supabase.auth.getUser()
 
   return (
     <html lang="en">
       <body>
+        <Suspense fallback={null}>
+          <ProgressBar />
+        </Suspense>
         {user ? (
-          // Single flex container — sidebar + main are siblings
           <div className="app-shell">
             <Sidebar user={user} />
             <main className="app-main">

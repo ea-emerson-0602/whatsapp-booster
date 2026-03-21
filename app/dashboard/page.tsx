@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { LocalTime } from '@/components/LocalTime'
+import OnboardingChecklist from '@/components/OnboardingChecklist'
 
 export default async function DashboardPage({
   searchParams,
@@ -116,6 +117,9 @@ export default async function DashboardPage({
           <Link href="/contacts?filter=stale" style={{ fontWeight: 500, color: '#633806', fontSize: 13 }}>View →</Link>
         </div>
       )}
+
+      {/* Onboarding checklist — auto-hides when all steps done */}
+      <OnboardingChecklist userId={user!.id} />
 
       {/* Metric cards */}
       <div className="grid-4" style={{ marginBottom: '1.5rem' }}>
