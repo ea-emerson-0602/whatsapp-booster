@@ -1,18 +1,19 @@
 // Paystack utility — all calls are server-side only
 // Docs: https://paystack.com/docs/api
 
+import crypto from 'crypto'
+
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY!
 const PAYSTACK_BASE_URL = 'https://api.paystack.co'
 
 export const PLAN = {
   name: 'WA Booster Starter',
-  amount: 1000000, // 10,000 NGN in kobo (Paystack uses kobo — multiply by 100)
+  amount: 1000000, // 10,000 NGN in kobo
   interval: 'monthly',
   trialDays: 7,
   code: process.env.PAYSTACK_PLAN_CODE!,
 }
 
-// Helper to make Paystack API calls
 async function paystackRequest(method: string, path: string, body?: object) {
   const res = await fetch(`${PAYSTACK_BASE_URL}${path}`, {
     method,
@@ -25,7 +26,7 @@ async function paystackRequest(method: string, path: string, body?: object) {
   return res.json()
 }
 
-// Initialize a transaction with 7-day trial
+// Initialize a transaction — plan code overrides amount per Paystack docs
 export async function initializeTransaction({
   email,
   userId,
@@ -37,22 +38,26 @@ export async function initializeTransaction({
 }) {
   return paystackRequest('POST', '/transaction/initialize', {
     email,
-    plan: PLAN.code,
-    amount: PLAN.amount, // already in kobo
+    plan: PLAN.code,          // plan code overrides amount automatically
     callback_url: callbackUrl,
     metadata: {
-      user_id: userId,
+      user_id: userId,        // stored so webhook can identify the user
       cancel_action: `${process.env.NEXT_PUBLIC_APP_URL}/subscribe`,
     },
   })
 }
 
-// Verify a transaction by reference
+// Verify a transaction by reference after callback redirect
 export async function verifyTransaction(reference: string) {
   return paystackRequest('GET', `/transaction/verify/${reference}`)
 }
 
-// Cancel a subscription
+// Fetch a subscription by its code
+export async function fetchSubscription(subscriptionCode: string) {
+  return paystackRequest('GET', `/subscription/${subscriptionCode}`)
+}
+
+// Cancel a subscription — requires subscription_code + email_token
 export async function cancelSubscription(subscriptionCode: string, emailToken: string) {
   return paystackRequest('POST', '/subscription/disable', {
     code: subscriptionCode,
@@ -60,9 +65,8 @@ export async function cancelSubscription(subscriptionCode: string, emailToken: s
   })
 }
 
-// Verify webhook signature
-export function verifyWebhookSignature(payload: string, signature: string) {
-  const crypto = require('crypto')
+// Verify that a webhook request genuinely came from Paystack
+export function verifyWebhookSignature(payload: string, signature: string): boolean {
   const hash = crypto
     .createHmac('sha512', PAYSTACK_SECRET_KEY)
     .update(payload)
