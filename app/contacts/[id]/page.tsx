@@ -5,6 +5,7 @@ import type { Message } from '@/lib/types'
 import { LocalTime } from '@/components/LocalTime'
 import ContactActions from './ContactActions'
 import MessageBox from './MessageBox'
+import EditContact from './EditContact'
 
 export default async function ContactDetailPage({
   params,
@@ -34,10 +35,12 @@ export default async function ContactDetailPage({
     <div style={{ maxWidth: 640, margin: '0 auto' }}>
 
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: '1.5rem', flexWrap: 'wrap' }}>
         <Link href="/contacts" style={{ color: '#888', fontSize: 13, flexShrink: 0 }}>← Contacts</Link>
         <h1 style={{ fontSize: 22, fontWeight: 500 }}>{contact.name}</h1>
-        <span className={`tag tag-${contact.tag}`}>{contact.tag}</span>
+        <span className={`tag tag-${contact.tag ?? 'Untagged'}`}>
+          {contact.tag ?? 'Untagged'}
+        </span>
       </div>
 
       {/* Contact info card */}
@@ -49,7 +52,9 @@ export default async function ContactDetailPage({
           </div>
           <div>
             <p style={{ fontSize: 12, color: '#888', marginBottom: 2 }}>Added</p>
-            <p style={{ fontSize: 14 }}><LocalTime dateString={contact.created_at} showTime={false} /></p>
+            <p style={{ fontSize: 14 }}>
+              <LocalTime dateString={contact.created_at} showTime={false} />
+            </p>
           </div>
           <div>
             <p style={{ fontSize: 12, color: '#888', marginBottom: 2 }}>Last message</p>
@@ -66,11 +71,14 @@ export default async function ContactDetailPage({
         </div>
 
         {contact.notes && (
-          <div style={{ borderTop: '1px solid #f0f0ee', paddingTop: 12 }}>
+          <div style={{ borderTop: '1px solid #f0f0ee', paddingTop: 12, marginBottom: 12 }}>
             <p style={{ fontSize: 12, color: '#888', marginBottom: 4 }}>Notes</p>
             <p style={{ fontSize: 14, color: '#555' }}>{contact.notes}</p>
           </div>
         )}
+
+        {/* Inline edit form */}
+        <EditContact contact={contact} />
       </div>
 
       {/* Message history */}
