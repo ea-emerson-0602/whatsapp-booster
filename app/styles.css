@@ -325,6 +325,7 @@ input:focus, textarea:focus, select:focus {
 
   .app-main {
     padding: 1.25rem 1rem;
+    overflow-x: hidden;
   }
 
   .grid-4 {
@@ -369,5 +370,6 @@ input:focus, textarea:focus, select:focus {
 
   .app-main {
     padding: 1rem 0.875rem;
+    overflow-x: hidden;
   }
 }

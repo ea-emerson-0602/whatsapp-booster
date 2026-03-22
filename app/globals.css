@@ -330,6 +330,7 @@ input:focus, textarea:focus, select:focus {
   /* Main content full width, less padding */
   .app-main {
     padding: 1.25rem 1rem;
+    overflow-x: hidden;
   }
 
   /* 4-col → 2-col on tablet, 1-col on mobile */
@@ -381,6 +382,7 @@ input:focus, textarea:focus, select:focus {
 
   .app-main {
     padding: 1rem 0.875rem;
+    overflow-x: hidden;
   }
 }
 

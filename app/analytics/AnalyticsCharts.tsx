@@ -71,7 +71,7 @@ function LineChart({ data }: { data: DayData[] }) {
   }, [ready, data])
 
   if (!ready) return <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb', fontSize: 13 }}>Loading chart...</div>
-  return <canvas ref={canvasRef} style={{ height: 220 }} />
+  return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
 }
 
 function DonutChart({ tagCounts }: { tagCounts: Record<string, number> }) {
@@ -112,7 +112,7 @@ function DonutChart({ tagCounts }: { tagCounts: Record<string, number> }) {
   }, [ready, tagCounts])
 
   if (!ready) return <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb', fontSize: 13 }}>Loading chart...</div>
-  return <canvas ref={canvasRef} style={{ height: 220 }} />
+  return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
 }
 
 function BarChart({ broadcasts }: { broadcasts: any[] }) {
@@ -153,7 +153,7 @@ function BarChart({ broadcasts }: { broadcasts: any[] }) {
   }, [ready, broadcasts])
 
   if (!ready) return <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb', fontSize: 13 }}>Loading chart...</div>
-  return <canvas ref={canvasRef} style={{ height: 220 }} />
+  return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
 }
 
 export default function AnalyticsCharts({
@@ -188,7 +188,7 @@ export default function AnalyticsCharts({
       </div>
 
       {/* Line chart */}
-      <div className="card" style={{ marginBottom: '1rem' }}>
+      <div className="card" style={{ marginBottom: '1rem', overflow: 'hidden' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <div>
             <p style={{ fontWeight: 500, fontSize: 15 }}>Message activity</p>
@@ -196,7 +196,7 @@ export default function AnalyticsCharts({
           </div>
           <span style={{ fontSize: 13, color: '#888' }}>{totalMessages} total</span>
         </div>
-        <div style={{ height: 220 }}>
+        <div style={{ height: 220, width: '100%', position: 'relative' }}>
           {totalMessages > 0
             ? <LineChart data={dailyData} />
             : <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb', fontSize: 13 }}>No messages in the last 30 days</div>
@@ -206,12 +206,12 @@ export default function AnalyticsCharts({
 
       <div className="grid-2" style={{ marginBottom: '1rem' }}>
         {/* Donut */}
-        <div className="card">
+        <div className="card" style={{ overflow: 'hidden' }}>
           <p style={{ fontWeight: 500, fontSize: 15, marginBottom: 4 }}>Contacts by tag</p>
           <p style={{ fontSize: 12, color: '#888', marginBottom: 16 }}>
             {Object.values(tagCounts).reduce((a, b) => a + b, 0)} total
           </p>
-          <div style={{ height: 220 }}>
+          <div style={{ height: 220, width: '100%', position: 'relative' }}>
             {hasTagData
               ? <DonutChart tagCounts={tagCounts} />
               : <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb', fontSize: 13 }}>No contacts yet</div>
@@ -220,15 +220,20 @@ export default function AnalyticsCharts({
         </div>
 
         {/* Bar */}
-        <div className="card">
+        <div className="card" style={{ overflow: 'hidden' }}>
           <p style={{ fontWeight: 500, fontSize: 15, marginBottom: 4 }}>Broadcast performance</p>
           <p style={{ fontSize: 12, color: '#888', marginBottom: 16 }}>Messages sent per broadcast</p>
-          <div style={{ height: 220 }}>
-            {hasBroadcasts
-              ? <BarChart broadcasts={broadcasts} />
-              : <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb', fontSize: 13 }}>No broadcasts sent yet</div>
-            }
+          <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' as any }}>
+            <div style={{ height: 220, minWidth: Math.max(280, broadcasts.length * 80), position: 'relative' }}>
+              {hasBroadcasts
+                ? <BarChart broadcasts={broadcasts} />
+                : <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb', fontSize: 13 }}>No broadcasts sent yet</div>
+              }
+            </div>
           </div>
+          {hasBroadcasts && broadcasts.length > 3 && (
+            <p style={{ fontSize: 11, color: '#bbb', marginTop: 8, textAlign: 'center' }}>← Scroll to see all →</p>
+          )}
         </div>
       </div>
 
