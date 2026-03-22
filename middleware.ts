@@ -32,6 +32,8 @@ export async function middleware(request: NextRequest) {
 
   // Public routes — no login needed
   const publicRoutes = [
+    '/',
+    '/home',
     '/login',
     '/signup',
     '/forgot-password',
