@@ -79,13 +79,17 @@ export async function GET(request: NextRequest) {
 
     for (const customer of customers) {
       try {
-        await sendWhatsAppMessage(customer.phone, broadcast.message_body)
+        // Replace {{name}} with the contact's actual name
+        const personalised = broadcast.message_body
+          .replace(/\{\{name\}\}/gi, customer.name || 'there')
+
+        await sendWhatsAppMessage(customer.phone, personalised)
 
         // Log the outbound message
         await supabase.from('messages').insert({
           user_id: broadcast.user_id,
           customer_id: customer.id,
-          body: broadcast.message_body,
+          body: personalised,
           direction: 'outbound',
           status: 'sent',
         })
