@@ -26,7 +26,7 @@ async function paystackRequest(method: string, path: string, body?: object) {
   return res.json()
 }
 
-// Initialize a transaction — plan code overrides amount per Paystack docs
+// Initialize a transaction — amount is required but plan code overrides it
 export async function initializeTransaction({
   email,
   userId,
@@ -38,10 +38,11 @@ export async function initializeTransaction({
 }) {
   return paystackRequest('POST', '/transaction/initialize', {
     email,
-    plan: PLAN.code,          // plan code overrides amount automatically
+    amount: PLAN.amount, // required by Paystack — plan code will override this
+    plan: PLAN.code,
     callback_url: callbackUrl,
     metadata: {
-      user_id: userId,        // stored so webhook can identify the user
+      user_id: userId,
       cancel_action: `${process.env.NEXT_PUBLIC_APP_URL}/subscribe`,
     },
   })
